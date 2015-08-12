@@ -957,6 +957,9 @@ echo '-->';
 					$annotations = explode('|', trim(str_replace('(**)', '', $asset_detail->annotation)));
 					$annotation_types = explode('|', trim(str_replace('(**)', '', $asset_detail->annotation_type)));
 					$annotation_refs = explode('|', trim(str_replace('(**)', '', $asset_detail->annotation_ref)));
+					
+					$edit_annotations = explode('|', trim(str_replace('(**)', '', $asset_detail->annotations_edit)));
+					
 					$add = ' ADD ANNOTATION';
 					?>
 					<td class="record-detail-page">
@@ -968,8 +971,10 @@ echo '-->';
 							if (count($annotations) > 0 && isset($annotations[0]) && ! empty($annotations[0]))
 							{
 								$add = ' ADD ANOTHER ANNOTATION';
-								foreach ($annotations as $index => $annotation)
+								// foreach ($annotations as $index => $annotation)
+								foreach ($edit_annotations as $index => $edit_annotation)
 								{
+									list($this_annotation_id, $this_annotation , $this_annotation_type , $this_annotation_ref) = explode('^', trim(str_replace('(**)', '', $edit_annotation)));
 									?>
 									<div id="remove_annotation_<?php echo $index; ?>" class="remove_annotation">
 										<div class="edit_form_div">
@@ -978,20 +983,20 @@ echo '-->';
 													Annotation:
 												</p>
 												<p>
-													<input type="text" id="asset_annotation_<?php echo $index; ?>" name="asset_annotation[]" value="<?php echo trim($annotation); ?>" />
+													<input type="text" id="asset_annotation_<?php echo $index; ?>" name="asset_annotation[]" value="<?php echo trim($this_annotation); ?>" />
 												</p>
 											</div>
 											<div>
 												<p> Annotation Type:</p>
 												<p>
-													<input type="text" id="asset_annotation_type_<?php echo $index; ?>" name="asset_annotation_type[]" value="<?php echo (isset($annotation_types[$index])) ? trim($annotation_types[$index]) : ''; ?>" />
+													<input type="text" id="asset_annotation_type_<?php echo $index; ?>" name="asset_annotation_type[]" value="<?php echo (isset($this_annotation_type)) ? trim($this_annotation_type) : ''; ?>" />
 
 												</p>
 											</div>
 											<div>
 												<p> Annotation Ref:</p>
 												<p>
-													<input type="text" id="asset_annotation_ref_<?php echo $index; ?>" name="asset_annotation_ref[]" value="<?php echo (isset($annotation_refs[$index])) ? trim($annotation_refs[$index]) : ''; ?>" />
+													<input type="text" id="asset_annotation_ref_<?php echo $index; ?>" name="asset_annotation_ref[]" value="<?php echo (isset($this_annotation_ref)) ? trim($this_annotation_ref) : ''; ?>" />
 													<span class="help-block">Must be a valid URI/URL (e.g. http://www.example.com)</span>
 												</p>
 											</div>

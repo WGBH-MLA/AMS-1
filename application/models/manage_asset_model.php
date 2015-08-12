@@ -91,6 +91,9 @@ class Manage_Asset_Model extends CI_Model
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(audience_ratings.audience_rating,'(**)'))  SEPARATOR ' | ') AS audience_rating", FALSE);
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(audience_ratings.audience_rating_source,'(**)'))  SEPARATOR ' | ') AS audience_rating_source", FALSE);
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(audience_ratings.audience_rating_ref,'(**)'))  SEPARATOR ' | ') AS audience_rating_ref", FALSE);
+
+		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(CONCAT_WS(' ^ ',annotations.id,annotations.annotation,annotations.annotation_type,annotations.annotation_ref ),'(**)'))   SEPARATOR ' | ') AS annotations_edit", FALSE);
+
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(annotations.annotation,'(**)'))  SEPARATOR ' | ') AS annotation", FALSE);
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(annotations.annotation_type,'(**)'))  SEPARATOR ' | ') AS annotation_type", FALSE);
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(annotations.annotation_ref,'(**)'))  SEPARATOR ' | ') AS annotation_ref", FALSE);

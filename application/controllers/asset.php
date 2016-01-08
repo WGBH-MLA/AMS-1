@@ -118,9 +118,9 @@ class Asset extends MY_Controller
 							$identifier_ref = $this->input->post('asset_identifier_ref');
 							$identifier_detail['assets_id'] = $asset_id;
 							$identifier_detail['identifier'] = $value;
-							if ( ! empty($identifier_source[$index]))
+							# if ( ! empty($identifier_source[$index]))
 								$identifier_detail['identifier_source'] = $identifier_source[$index];
-							if ( ! empty($identifier_ref[$index]))
+							# if ( ! empty($identifier_ref[$index]))
 								$identifier_detail['identifier_ref'] = $identifier_ref[$index];
 							$this->assets_model->insert_identifiers($identifier_detail);
 						}
@@ -178,11 +178,11 @@ class Asset extends MY_Controller
 							$subject_d = array();
 							$subject_d['subject'] = $value;
 							$subject_d['subjects_types_id'] = $subject_type[$index];
-							if ( ! empty($subject_ref[$index]))
+							# if ( ! empty($subject_ref[$index]))
 							{
 								$subject_d['subject_ref'] = $subject_ref[$index];
 							}
-							if ( ! empty($subject_source[$index]))
+							# if ( ! empty($subject_source[$index]))
 							{
 								$subject_d['subject_source'] = $subject_source[$index];
 							}
@@ -270,11 +270,11 @@ class Asset extends MY_Controller
 						{
 							$asset_audience_level['assets_id'] = $asset_id;
 							$audience_level['audience_level'] = trim($value);
-							if ( ! empty($audience_source[$index]))
+							# if ( ! empty($audience_source[$index]))
 							{
 								$audience_level['audience_level_source'] = $audience_source[$index];
 							}
-							if ( ! empty($audience_ref[$index]))
+							# if ( ! empty($audience_ref[$index]))
 							{
 								$audience_level['audience_level_ref'] = $audience_ref[$index];
 							}
@@ -301,11 +301,11 @@ class Asset extends MY_Controller
 						{
 							$asset_audience_rating['assets_id'] = $asset_id;
 							$audience_rating['audience_rating'] = trim($value);
-							if ( ! empty($audience_source[$index]))
+							# if ( ! empty($audience_source[$index]))
 							{
 								$audience_rating['audience_rating_source'] = $audience_source[$index];
 							}
-							if ( ! empty($audience_ref[$index]))
+							# if ( ! empty($audience_ref[$index]))
 							{
 								$audience_rating['audience_rating_ref'] = $audience_ref[$index];
 							}
@@ -332,9 +332,9 @@ class Asset extends MY_Controller
 						{
 							$annotation['assets_id'] = $asset_id;
 							$annotation['annotation'] = $value;
-							if ( ! empty($annotation_type[$index]))
+							# if ( ! empty($annotation_type[$index]))
 								$annotation['annotation_type'] = $annotation_type[$index];
-							if ( ! empty($annotation_ref[$index]))
+							# if ( ! empty($annotation_ref[$index]))
 								$annotation['annotation_ref'] = $annotation_ref[$index];
 
 							$asset_annotation = $this->assets_model->insert_annotation($annotation);
@@ -353,9 +353,9 @@ class Asset extends MY_Controller
 							$assets_relation['assets_id'] = $asset_id;
 							$assets_relation['relation_identifier'] = $value;
 							$relation_types['relation_type'] = $relation_type[$index];
-							if ( ! empty($relation_src[$index]))
+							# if ( ! empty($relation_src[$index]))
 								$relation_types['relation_type_source'] = $relation_src[$index];
-							if ( ! empty($relation_ref[$index]))
+							# if ( ! empty($relation_ref[$index]))
 								$relation_types['relation_type_ref'] = $relation_ref[$index];
 							$db_relations = $this->assets_model->get_relation_types_all($relation_types);
 							if (isset($db_relations) && isset($db_relations->id))
@@ -383,9 +383,9 @@ class Asset extends MY_Controller
 						{
 							$assets_creators_roles_d['assets_id'] = $asset_id;
 							$creater['creator_name'] = $value;
-							if ( ! empty($affiliation[$index]))
+							# if ( ! empty($affiliation[$index]))
 								$creater['creator_affiliation'] = $affiliation[$index];
-							if ( ! empty($ref[$index]))
+							# if ( ! empty($ref[$index]))
 								$creater['creator_ref'] = $ref[$index];
 							$creator_d = $this->assets_model->get_creator_by_creator_info($creater);
 							if (isset($creator_d) && isset($creator_d->id))
@@ -397,9 +397,9 @@ class Asset extends MY_Controller
 								$assets_creators_roles_d['creators_id'] = $this->assets_model->insert_creators($creater);
 							}
 							$role['creator_role'] = $roles[$index];
-							if ( ! empty($role_src[$index]))
+							# if ( ! empty($role_src[$index]))
 								$role['creator_role_source'] = $role_src[$index];
-							if ( ! empty($role_ref[$index]))
+							# if ( ! empty($role_ref[$index]))
 								$role['creator_role_ref'] = $role_ref[$index];
 							$creator_role = $this->assets_model->get_creator_role_info($role);
 							if (isset($creator_role) && isset($creator_role->id))
@@ -427,9 +427,9 @@ class Asset extends MY_Controller
 						{
 							$assets_contributors_d['assets_id'] = $asset_id;
 							$contributor_info['contributor_name'] = $value;
-							if ( ! empty($affiliation[$index]))
+							# if ( ! empty($affiliation[$index]))
 								$contributor_info['contributor_affiliation'] = $affiliation[$index];
-							if ( ! empty($ref[$index]))
+							# if ( ! empty($ref[$index]))
 								$contributor_info['contributor_ref'] = $ref[$index];
 							$creator_d = $this->assets_model->get_contributor_by_contributor_info($contributor_info);
 							if (isset($creator_d) && isset($creator_d->id))
@@ -441,9 +441,9 @@ class Asset extends MY_Controller
 								$assets_contributors_d['contributors_id'] = $this->assets_model->insert_contributors($contributor_info);
 							}
 							$contributorrole_info['contributor_role'] = $roles[$index];
-							if ( ! empty($role_src[$index]))
+							# if ( ! empty($role_src[$index]))
 								$contributorrole_info['contributor_role_source'] = $role_src[$index];
-							if ( ! empty($role_ref[$index]))
+							# if ( ! empty($role_ref[$index]))
 								$contributorrole_info['contributor_role_ref'] = $role_ref[$index];
 							$contributor_role = $this->assets_model->get_contributor_role_info($contributorrole_info);
 							if (isset($contributor_role) && isset($contributor_role->id))
@@ -472,9 +472,9 @@ class Asset extends MY_Controller
 						{
 							$assets_publisher_d['assets_id'] = $asset_id;
 							$publisher_info['publisher'] = $value;
-							if ( ! empty($affiliation[$index]))
+							# if ( ! empty($affiliation[$index]))
 								$publisher_info['publisher_affiliation'] = $affiliation[$index];
-							if ( ! empty($ref[$index]))
+							# if ( ! empty($ref[$index]))
 								$publisher_info['publisher_ref'] = $ref[$index];
 							$publisher_d = $this->assets_model->get_publisher_info($publisher_info);
 							if (isset($publisher_d) && isset($publisher_d->id))
@@ -486,9 +486,9 @@ class Asset extends MY_Controller
 								$assets_publisher_d['publishers_id'] = $this->assets_model->insert_publishers($publisher_info);
 							}
 							$publisher_role_info['publisher_role'] = $roles[$index];
-							if ( ! empty($role_src[$index]))
+							# if ( ! empty($role_src[$index]))
 								$publisher_role_info['publisher_role_source'] = $role_src[$index];
-							if ( ! empty($role_ref[$index]))
+							# if ( ! empty($role_ref[$index]))
 								$publisher_role_info['publisher_role_ref'] = $role_ref[$index];
 							$publisher_role = $this->assets_model->get_publisher_role_by_role($publisher_role_info);
 							if (isset($publisher_role) && isset($publisher_role->id))
@@ -510,7 +510,7 @@ class Asset extends MY_Controller
 					{
 						$rights_summary_d['assets_id'] = $asset_id;
 						$rights_summary_d['rights'] = $value;
-						if ( ! empty($right_link[$index]))
+						# if ( ! empty($right_link[$index]))
 							$rights_summary_d['rights_link'] = $right_link[$index];
 						$this->assets_model->insert_rights_summaries($rights_summary_d);
 					}

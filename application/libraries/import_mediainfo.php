@@ -101,6 +101,9 @@ class Import_mediainfo {
         if (isset($general_track['duration_string3']) && isset($general_track['duration_string3'][0]))
             if (!empty($general_track['duration_string3'][0]['text']))
                 $this->instantiation_info['actual_duration'] = date('H:i:s', strtotime($general_track['duration_string3'][0]['text']));
+		else if (isset($general_track['duration']) && isset($general_track['duration'][4]))
+            if (!empty($general_track['duration'][4]['text']))
+                $this->instantiation_info['actual_duration'] = date('H:i:s', strtotime($general_track['duration'][4]['text']));
         /* Actual Duration End */
         /* Standard Start */
         if (isset($general_track['format_profile']) && isset($general_track['format_profile'][0])) {
@@ -129,7 +132,12 @@ class Import_mediainfo {
             $format['format_type'] = 'digital';
             $format['instantiations_id'] = $this->_instantiation_id;
             $this->_model->insert_record($this->_model->table_instantiation_formats, $format);
-        }
+        } else if (isset($general_track['internet_media_type']) && isset($general_track['internet_media_type'][0])) {
+            $format['format_name'] = $general_track['internet_media_type'][0]['text'];
+            $format['format_type'] = 'digital';
+            $format['instantiations_id'] = $this->_instantiation_id;
+            $this->_model->insert_record($this->_model->table_instantiation_formats, $format);
+            }
         /* Instantiation Format End */
         $this->save_annotations($general_track);
     }
@@ -146,9 +154,23 @@ class Import_mediainfo {
                 $annotation['instantiations_id'] = $this->_instantiation_id;
                 $this->_model->insert_record($this->_model->table_instantiation_annotations, $annotation);
             }
-        } else if (isset($general_track['encodedby']) && isset($general_track['encodedby'][0])) {
+        } elseif (isset($general_track['encodedby']) && isset($general_track['encodedby'][0])) {
             if (!empty($general_track['encodedby'][0]['text'])) {
                 $annotation['annotation'] = $general_track['encodedby'][0]['text'];
+                $annotation['annotation_type'] = 'encoded by';
+                $annotation['instantiations_id'] = $this->_instantiation_id;
+                $this->_model->insert_record($this->_model->table_instantiation_annotations, $annotation);
+            }
+        } elseif (isset($general_track['writing_application']) && isset($general_track['writing_application'][0])) {
+            if (!empty($general_track['writing_application'][0]['text'])) {
+                $annotation['annotation'] = $general_track['writing_application'][0]['text'];
+                $annotation['annotation_type'] = 'encoded by';
+                $annotation['instantiations_id'] = $this->_instantiation_id;
+                $this->_model->insert_record($this->_model->table_instantiation_annotations, $annotation);
+            }
+        } elseif (isset($general_track['writing_library']) && isset($general_track['writing_library'][0])) {
+            if (!empty($general_track['writing_library'][0]['text'])) {
+                $annotation['annotation'] = $general_track['writing_library'][0]['text'];
                 $annotation['annotation_type'] = 'encoded by';
                 $annotation['instantiations_id'] = $this->_instantiation_id;
                 $this->_model->insert_record($this->_model->table_instantiation_annotations, $annotation);
@@ -164,15 +186,20 @@ class Import_mediainfo {
     function save_instantiation_date($general_track) {
 
         /* Instantiation Date Start */
-        if (isset($general_track['encoded_date']) && isset($general_track['encoded_date'][0])) {
-
+        if (isset($general_track['encoded_date']) && isset($general_track['encoded_date'][0])) 
+        {
             if (!empty($general_track['encoded_date'][0]['text']) || $general_track['encoded_date'][0]['text'] != NULL)
                 $date['instantiation_date'] = date('Y-m-d', strtotime($general_track['encoded_date'][0]['text']));
-            else if (isset($general_track['file_modified_date']) && isset($general_track['file_modified_date'][0]))
-                $date['instantiation_date'] = date('Y-m-d', strtotime($general_track['file_modified_date'][0]['text']));
+            else if (isset($general_track['file_modified_date']) && isset($general_track['file_modified_date'][0])) 
+                	$date['instantiation_date'] = date('Y-m-d', strtotime($general_track['file_modified_date'][0]['text']));
+            else if (isset($general_track['file_last_modification_date']) && isset($general_track['file_last_modification_date'][0]))
+					$date['instantiation_date'] = date('Y-m-d', strtotime($general_track['file_last_modification_date'][0]['text']));
         }
-        else if (isset($general_track['file_modified_date']) && isset($general_track['file_modified_date'][0]))
-            $date['instantiation_date'] = date('Y-m-d', strtotime($general_track['file_modified_date'][0]['text']));
+        elseif (isset($general_track['file_modified_date']) && isset($general_track['file_modified_date'][0]))
+				$date['instantiation_date'] = date('Y-m-d', strtotime($general_track['file_modified_date'][0]['text']));
+        elseif (isset($general_track['file_last_modification_date']) && isset($general_track['file_last_modification_date'][0]))
+					$date['instantiation_date'] = date('Y-m-d', strtotime($general_track['file_last_modification_date'][0]['text']));
+
 
         if (isset($date['instantiation_date']) && $date['instantiation_date'] != '') {
             $date_type = $this->_model->get_one_by($this->_model->table_date_types, array('date_type' => 'encoded'), TRUE);
@@ -270,6 +297,59 @@ class Import_mediainfo {
                 }
             }
         }
+        else if (isset($general_track['file_name']) && isset($general_track['file_name'][0])) {
+            if (isset($general_track['file_extension']) && isset($general_track['file_extension'][0])) {
+                $filename = explode("__", $general_track['file_name'][0]['text']);//explode($general_track['filename'][0]['text']
+                $identifier['instantiation_identifier'] = $filename[0];//$general_track['filename'][0]['text'];
+                $db_asset_id = $this->get_asset_id_for_media_import($identifier['instantiation_identifier']);
+                $parent_instantiations = $this->_model->get_by($this->_model->table_instantiations, array('assets_id' => $db_asset_id));
+                if (count($parent_instantiations) == 1) {
+                    $this->_model->update_instantiations($parent_instantiations[0]->id, array('digitized' => 1));
+                    $this->update_ins_asset_index($parent_instantiations[0]->id);
+                } else {
+                    $parent_instantiations = $this->_model->get_instantiation_with_event_by_asset_id($db_asset_id);
+                    if (count($parent_instantiations) > 0) {
+                        $this->_model->update_instantiations($parent_instantiations->id, array('digitized' => 1));
+                        $this->update_ins_asset_index($parent_instantiations->id);
+                    }
+                }                
+                if ($db_asset_id) {
+                    $this->instantiation_info['assets_id'] = $db_asset_id;
+                    if(count($filename) == 2){
+                        $this->instantiation_info['digitized'] = 1;
+                    }
+                    print_r($this->instantiation_info);
+                    $this->_model->update_instantiations($this->_instantiation_id, $this->instantiation_info);
+                    myLog('Instantiation updated ID => ' . $this->_instantiation_id);
+                }
+
+                // Save Identifier of Instantiation Start
+                $identifier['instantiation_identifier'] = $general_track['file_name'][0]['text'] . '.' . $general_track['file_extension'][0]['text'];
+                $identifier['instantiation_source'] = 'mediainfo';
+                $identifier['instantiations_id'] = $this->_instantiation_id;
+                $this->_model->insert_record($this->_model->table_instantiation_identifier, $identifier);
+
+                // Save Identifier of Instantiation End
+                $filename = $identifier['instantiation_identifier'];
+                $generation = '';
+                if (strstr($filename, '.j2k.mxf') || strstr($filename, '.wav'))
+                    $generation = 'Preservation Master';
+                else if (strstr($filename, '.mpeg2.mxf'))
+                    $generation = 'Mezzanine';
+                else if (strstr($filename, '.h264.mov') || strstr($filename, '.mp3'))
+                    $generation = 'Proxy';
+                if ($generation !== '') {
+                    $generations_d = $this->_model->get_one_by($this->_model->table_generations, array('generation' => $generation));
+                    if (isset($generations_d) && isset($generations_d->id))
+                        $generations['generations_id'] = $generations_d->id;
+                    else
+                        $generations['generations_id'] = $this->_model->insert_record($this->_model->table_generations, array("generation" => $generation));
+
+                    $generations['instantiations_id'] = $this->_instantiation_id;
+                    $this->_model->insert_record($this->_model->table_instantiation_generations, $generations);
+                }
+            }
+        }
     }
 
     /**
@@ -291,12 +371,31 @@ class Import_mediainfo {
                         $this->instantiation_info['data_rate_units_id'] = $this->_model->insert_record($this->_model->table_data_rate_units, array('unit_of_measure' => $data_rate_unit));
                 }
             }
+        } else if (isset($general_track['overall_bit_rate']) && isset($general_track['overall_bit_rate'][1])) {
+            if (!empty($general_track['overall_bit_rate'][1]['text'])) {
+                $datarate = explode(' ', $general_track['overall_bit_rate'][1]['text']);
+                $this->instantiation_info['data_rate'] = (isset($datarate[0])) ? $datarate[0] : '';
+                $data_rate_unit = (isset($datarate[1])) ? $datarate[1] : '';
+                if ($data_rate_unit != '') {
+                    $datarate_unit = $this->_model->get_one_by($this->_model->table_data_rate_units, array('unit_of_measure' => $data_rate_unit), TRUE);
+                    if (!is_empty($datarate_unit))
+                        $this->instantiation_info['data_rate_units_id'] = $datarate_unit->id;
+                    else
+                        $this->instantiation_info['data_rate_units_id'] = $this->_model->insert_record($this->_model->table_data_rate_units, array('unit_of_measure' => $data_rate_unit));
+                }
+            }
         }
         /* Data Rate End */
         /* File Size Start */
         if (isset($general_track['filesize_string4']) && isset($general_track['filesize_string4'][0])) {
             if (!empty($general_track['filesize_string4'][0]['text'])) {
                 $filesize = explode(' ', $general_track['filesize_string4'][0]['text']);
+                $this->instantiation_info['file_size'] = (isset($filesize[0])) ? $filesize[0] : '';
+                $this->instantiation_info['file_size_unit_of_measure'] = (isset($filesize[1])) ? $filesize[1] : '';
+            }
+        } else if (isset($general_track['file_size']) && isset($general_track['file_size'][5])) {
+            if (!empty($general_track['file_size'][5]['text'])) {
+                $filesize = explode(' ', $general_track['file_size'][5]['text']);
                 $this->instantiation_info['file_size'] = (isset($filesize[0])) ? $filesize[0] : '';
                 $this->instantiation_info['file_size_unit_of_measure'] = (isset($filesize[1])) ? $filesize[1] : '';
             }
@@ -319,6 +418,14 @@ class Import_mediainfo {
 
                 $this->instantiation_info['tracks'].=$add_comma . $general_track['videocount'][0]['text'] . ' video';
             }
+        } else if (isset($general_track['count_of_video_streams']) && isset($general_track['count_of_video_streams'][0])) {
+            if (!empty($general_track['count_of_video_streams'][0]['text'])) {
+                $add_comma = '';
+                if ($this->instantiation_info['tracks'] !== '')
+                    $add_comma = ', ';
+
+                $this->instantiation_info['tracks'].=$add_comma . $general_track['count_of_video_streams'][0]['text'] . ' video';
+            }
         }
         if (isset($general_track['audiocount']) && isset($general_track['audiocount'][0])) {
             if (!empty($general_track['audiocount'][0]['text'])) {
@@ -326,6 +433,13 @@ class Import_mediainfo {
                 if ($this->instantiation_info['tracks'] !== '')
                     $add_comma = ', ';
                 $this->instantiation_info['tracks'].=$add_comma . $general_track['audiocount'][0]['text'] . ' audio';
+            }
+        } else if (isset($general_track['count_of_audio_streams']) && isset($general_track['count_of_audio_streams'][0])) {
+            if (!empty($general_track['count_of_audio_streams'][0]['text'])) {
+                $add_comma = '';
+                if ($this->instantiation_info['tracks'] !== '')
+                    $add_comma = ', ';
+                $this->instantiation_info['tracks'].=$add_comma . $general_track['count_of_audio_streams'][0]['text'] . ' audio';
             }
         }
         if (isset($general_track['menucount']) && isset($general_track['menucount'][0])) {
@@ -335,6 +449,13 @@ class Import_mediainfo {
                     $add_comma = ', ';
                 $this->instantiation_info['tracks'].=$add_comma . $general_track['menucount'][0]['text'] . ' menu';
             }
+        } else if (isset($general_track['count_of_menu_streams']) && isset($general_track['count_of_menu_streams'][0])) {
+            if (!empty($general_track['count_of_menu_streams'][0]['text'])) {
+                $add_comma = '';
+                if ($this->instantiation_info['tracks'] !== '')
+                    $add_comma = ', ';
+                $this->instantiation_info['tracks'].=$add_comma . $general_track['count_of_menu_streams'][0]['text'] . ' menu';
+            }
         }
         if (isset($general_track['textcount']) && isset($general_track['textcount'][0])) {
             if (!empty($general_track['textcount'][0]['text'])) {
@@ -342,6 +463,13 @@ class Import_mediainfo {
                 if ($this->instantiation_info['tracks'] !== '')
                     $add_comma = ', ';
                 $this->instantiation_info['tracks'].=$add_comma . $general_track['textcount'][0]['text'] . ' text';
+            }
+        } else if (isset($general_track['count_of_text_streams']) && isset($general_track['count_of_text_streams'][0])) {
+            if (!empty($general_track['count_of_text_streams'][0]['text'])) {
+                $add_comma = '';
+                if ($this->instantiation_info['tracks'] !== '')
+                    $add_comma = ', ';
+                $this->instantiation_info['tracks'].=$add_comma . $general_track['count_of_text_streams'][0]['text'] . ' text';
             }
         }
     }
@@ -362,8 +490,16 @@ class Import_mediainfo {
                         $media_type = 'Sound';
             }
         }
+		else if (isset($general_track['count_of_video_streams']) && isset($general_track['count_of_video_streams'][0]))
+			if (!empty($general_track['count_of_video_streams'][0]['text']) || $general_track['count_of_video_streams'][0]['text'] != NULL || $general_track['count_of_video_streams'][0]['text'] > 0) 
+				$media_type = 'Moving Image';
+				
         else if (isset($general_track['audiocount']) && isset($general_track['audiocount'][0]))
             if (!empty($general_track['audiocount'][0]['text']) || $general_track['audiocount'][0]['text'] != NULL)
+                $media_type = 'Sound';
+                
+        else if (isset($general_track['count_of_audio_streams']) && isset($general_track['count_of_audio_streams'][0]))
+            if (!empty($general_track['count_of_audio_streams'][0]['text']) || $general_track['count_of_audio_streams'][0]['text'] != NULL)
                 $media_type = 'Sound';
 
         if ($media_type != '') {
@@ -375,7 +511,6 @@ class Import_mediainfo {
             myLog('Inserted Media ID => ' . $this->instantiation_info['instantiation_media_type_id']);
         }
     }
-
     /**
      * 
      * @param array $db_instantiation_id

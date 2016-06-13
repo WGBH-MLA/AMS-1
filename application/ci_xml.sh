@@ -46,8 +46,8 @@ function renewAuth
 function getKeyedValue
 {
 #	 arg1 is bigJSON string, arg2 is keyName string
-	foo=`echo "$1" | sed -e 's#^.*{##1' -e 's#}.*$##1' -e 's#{.*}##g'  -e "s#\"$2\"*:#&\
-#1" | grep -A1 "\"$2\"*:" | tail -1 | sed -e "s#\"$2\"*:##1" | cut -f1 -d,`;
+	foo=`echo "$1" | sed -e 's#^.*{##1' -e 's#}.*$##1' -e 's#{.*}##g' -e 's "'$2'": &\\
+ g' | grep -A1 "\"$2\"" | tail -1 | cut -f1 -d,    `;
 
 	fooLength=`echo -en "$foo" | wc -c | awk '{print $1}'`;
 	fooFirst=`echo -en "$foo" | cut -c1`;

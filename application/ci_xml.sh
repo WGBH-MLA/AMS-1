@@ -117,8 +117,10 @@ then
 	exit 1;
 fi;
 
-media_URL=`getKeyedValue "$media_getString" 'location' | sed -e 's#&#&amp;#g'`;
-
+#media_URL=`getKeyedValue "$media_getString" 'location' | sed -e 's#&#&amp;#g'`;
+# DISCARD LOCATIONS OF PROXIES AND GET THE PRIMARY LOCATION VALUE
+media_URL=$(echo "$media_getString" | grep '{' | tr '[]' '\n' | grep  '"proxies":' | sed -e 's#"location":#&\
+#1' | grep -A1 '"location":' | tail -1 | cut -f2 -d\");
 
 
 #echo "media url is $media_URL";

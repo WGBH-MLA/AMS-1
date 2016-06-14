@@ -120,7 +120,7 @@ fi;
 #media_URL=`getKeyedValue "$media_getString" 'location' | sed -e 's#&#&amp;#g'`;
 # DISCARD LOCATIONS OF PROXIES AND GET THE PRIMARY LOCATION VALUE
 media_URL=$(echo "$media_getString" | grep '{' | tr '{][}' '\n' | grep '"location":' | grep -v 'BitRate' | sed -e 's#"location":#&\
-#g' | grep -A1 '"location":' | tail -1 | cut -f2 -d\");
+#g' | grep -A1 '"location":' | tail -1 | cut -f2 -d\" | sed -e 's#&#&amp;#g');
 
 
 #echo "media url is $media_URL";

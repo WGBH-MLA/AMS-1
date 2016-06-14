@@ -191,7 +191,14 @@ class MY_Records_Controller extends MY_Controller
 		exec("/var/www/html/application/ci_xml.sh " . $asset_id_num , $foo_xml);
                 $proxy_response = implode($foo_xml);
                 $x = @simplexml_load_string($proxy_response);
-                if (is_object($x))
+		
+		# ENABLE THE NEXT FOUR LINES TO INSPECT WHAT PROXY DATA RETURNS FROM SONY
+		#echo "asset_id_num=";print_r($asset_id_num);
+		#echo "foo_xml=";print_r($foo_xml);
+		#echo "proxy_response=";print_r($proxy_response);
+		#echo "x=";print_r($x);
+                
+		if (is_object($x))
                 {
                         $data = xmlObjToArr($x);
 

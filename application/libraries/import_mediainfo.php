@@ -113,10 +113,10 @@ class Import_mediainfo {
                 if (!empty($general_track['format'][0]['text']) || $general_track['format'][0]['text'] != NULL)
                     $this->instantiation_info['standard'] = $general_track['format'][0]['text'];
         }
-        else if (isset($general_track['format']) && isset($general_track['format'][0]))
+        else if (isset($general_track['format']) && isset($general_track['format'][0])) {
             if (!empty($general_track['format'][0]['text']) || $general_track['format'][0]['text'] != NULL)
                 $this->instantiation_info['standard'] = $general_track['format'][0]['text'];
-
+	}
         /* Standard End */
         $this->save_instantiation_tracks($general_track);
         myLog('Tracks are updated');
@@ -247,6 +247,7 @@ class Import_mediainfo {
         if (isset($general_track['filename']) && isset($general_track['filename'][0])) {
             if (isset($general_track['fileextension']) && isset($general_track['fileextension'][0])) {
                 $filename = explode("__", $general_track['filename'][0]['text']);//explode($general_track['filename'][0]['text']
+		$completename = $general_track['completename'][0]['text'];
                 $identifier['instantiation_identifier'] = $filename[0];//$general_track['filename'][0]['text'];
                 $db_asset_id = $this->get_asset_id_for_media_import($identifier['instantiation_identifier']);
                 $parent_instantiations = $this->_model->get_by($this->_model->table_instantiations, array('assets_id' => $db_asset_id));
@@ -279,7 +280,13 @@ class Import_mediainfo {
                 // Save Identifier of Instantiation End
                 $filename = $identifier['instantiation_identifier'];
                 $generation = '';
-                if (strstr($filename, '.j2k.mxf') || strstr($filename, '.wav'))
+		if (strstr($completename, '/master/') )
+		    $generation = 'Preservation Master';
+		else if (strstr($completename, '/proxy/') )
+		    $generation = 'Proxy';
+		else if (strstr($completename, '/mezz/') )
+		    $generation = 'Mezzanine';
+                else if (strstr($filename, '.j2k.mxf') || strstr($filename, '.wav'))
                     $generation = 'Preservation Master';
                 else if (strstr($filename, '.mpeg2.mxf'))
                     $generation = 'Mezzanine';
@@ -300,6 +307,7 @@ class Import_mediainfo {
         else if (isset($general_track['file_name']) && isset($general_track['file_name'][0])) {
             if (isset($general_track['file_extension']) && isset($general_track['file_extension'][0])) {
                 $filename = explode("__", $general_track['file_name'][0]['text']);//explode($general_track['filename'][0]['text']
+		$completename = $general_track['complete_name'][0]['text'];
                 $identifier['instantiation_identifier'] = $filename[0];//$general_track['filename'][0]['text'];
                 $db_asset_id = $this->get_asset_id_for_media_import($identifier['instantiation_identifier']);
                 $parent_instantiations = $this->_model->get_by($this->_model->table_instantiations, array('assets_id' => $db_asset_id));
@@ -332,7 +340,13 @@ class Import_mediainfo {
                 // Save Identifier of Instantiation End
                 $filename = $identifier['instantiation_identifier'];
                 $generation = '';
-                if (strstr($filename, '.j2k.mxf') || strstr($filename, '.wav'))
+                if (strstr($completename, '/master/') )
+                    $generation = 'Preservation Master';
+                else if (strstr($completename, '/proxy/') )
+                    $generation = 'Proxy';
+                else if (strstr($completename, '/mezz/') )
+                    $generation = 'Mezzanine';
+                else if (strstr($filename, '.j2k.mxf') || strstr($filename, '.wav'))
                     $generation = 'Preservation Master';
                 else if (strstr($filename, '.mpeg2.mxf'))
                     $generation = 'Mezzanine';

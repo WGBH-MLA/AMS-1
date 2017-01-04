@@ -93,7 +93,7 @@ class Searchd extends CI_Controller
 			foreach ($records as $row)
 			{
 				$data = make_instantiation_sphnix_array($row);
-				$this->sphnixrt->insert($this->config->item('instantiatiion_index'), $data, $row->id);
+				$this->sphnixrt->insert('instantiations_list', $data, $row->id);
 			}
 			$offset = $offset + 1000;
 			if (count($inst) < 1000)
@@ -194,7 +194,7 @@ class Searchd extends CI_Controller
 			$asset = $this->searchd_model->run_query("SELECT id from assets WHERE id = {$_id}")->row();
 			$asset_list = $this->searchd_model->get_asset_index(array($asset->id));
 			$updated_asset_info = make_assets_sphnix_array($asset_list[0], FALSE);
-			$this->sphnixrt->update($this->config->item('asset_index'), $updated_asset_info);
+			$this->sphnixrt->update('assets_list', $updated_asset_info);
 			myLog('Asset successfully update with id=> ' . $_id);
 		}
 	}
@@ -212,11 +212,30 @@ class Searchd extends CI_Controller
 		foreach ($instantiation_ids as $_id)
 		{
 			$instantiation = $this->searchd_model->run_query("SELECT id from instantiations WHERE id = {$_id}")->row();
-			$instantiation_list = $this->searchd_model->get_ins_index(array($instantiation));
-			$new_list_info = make_instantiation_sphnix_array($instantiation_list[0], FALSE);
-			$this->sphnixrt->update($this->config->item('instantiatiion_index'), $new_list_info);
-			myLog('Instantiation successfully update with id=> ' . $_id);
+			//$instantiation_list = $this->searchd_model->get_ins_index(array($instantiation));
+			if ( empty($instantiation))
+			{
+				myLog('NOT FOUND: instantiation id ' . $_id);
+			} else 
+			{
+				$instantiation_list = $this->searchd_model->get_ins_index(array($_id));
+				$new_list_info = make_instantiation_sphnix_array($instantiation_list[0], FALSE);
+				$this->sphnixrt->update('instantiations_list', $new_list_info);
+				myLog('Instantiation successfully updated with id=> ' . $_id);
+			}
 		}
+	}
+
+
+	function test_instantiations_index()
+	{
+		$_id=5463209;
+		$instantiation = $this->searchd_model->run_query("SELECT id from instantiations WHERE id = {$_id}")->row();
+		$instantiation_list = $this->searchd_model->get_ins_index(array($instantiation->id));
+		$new_list_info = make_instantiation_sphnix_array($instantiation_list[0], FALSE);
+		if ( empty($instantiation) )
+		myLog ('it was not found');
+		myLog( implode (',',$new_list_info )) ;
 	}
 
 }

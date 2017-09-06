@@ -676,7 +676,7 @@ function validateForm() {
 		for (cnt in name) {
 			$('input[name="' + name[cnt] + '[]"]').each(function() {
 				var urlregex = new RegExp(
-				"^(https?:\/\/|ftp:\/\/)?((www|id\.loc|lccn\.loc|metadataregistry|ebu|w3|loc|cv\.iptc|www-tc.pbs|getty|geonames)\.([0-9A-Za-z]))|(www3\.ebu\.ch)");
+				"^(https?:\/\/|ftp:\/\/)?((www|id\.loc|lccn\.loc|metadataregistry|ebu|w3|loc|s3|cv\.iptc|www-tc.pbs|getty|geonames)\.([0-9A-Za-z]))|(www3\.ebu\.ch)");
 				/* was "^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)" */
 				if ($(this).val() != '') {
 					if (!urlregex.test($(this).val())) {

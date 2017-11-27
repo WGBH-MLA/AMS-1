@@ -52,9 +52,14 @@ class Manage_Asset_Model extends CI_Model
 
 	function get_asset_detail_by_id($asset_id)
 	{
+		$this->db->query('SET SESSION group_concat_max_len = 1000000;');
 		$this->db->select('assets.id,assets.stations_id,stations.station_name');
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(asset_types.asset_type,'(**)'))  SEPARATOR ' | ') AS asset_type", FALSE);
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(asset_dates.asset_date,'(**)'))  SEPARATOR ' | ') AS asset_date", FALSE);
+
+		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(CONCAT_WS(' ^ ',asset_dates.asset_date, asset_dates.date_types_id ),'(**)'))   SEPARATOR ' | ') AS asset_dates_edit", FALSE);
+		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(CONCAT_WS(' ^ ',date_types.id, date_types.date_type ),'(**)'))   SEPARATOR ' | ') AS date_types_edit", FALSE);
+
 		$this->db->select("GROUP_CONCAT(IFNULL(date_types.date_type,'(**)')  SEPARATOR ' | ') AS date_type", FALSE);
 		$this->db->select("GROUP_CONCAT(IFNULL(identifiers.id,'(**)')  SEPARATOR ' | ') AS identifier_id", FALSE);
 		$this->db->select("GROUP_CONCAT(DISTINCT(IFNULL(CONCAT_WS(' ^ ',identifiers.id,identifiers.identifier,identifiers.identifier_source,identifiers.identifier_ref ),'(**)'))   SEPARATOR ' | ') AS kevin_test", FALSE);

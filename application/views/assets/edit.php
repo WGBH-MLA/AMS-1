@@ -130,6 +130,9 @@ echo '-->';
 					<?php
 					$asset_dates = explode('|', trim(str_replace('(**)', '', $asset_detail->asset_date)));
 					$asset_date_types = explode('|', trim(str_replace('(**)', '', $asset_detail->date_type)));
+					$edit_asset_dates = explode('|', trim(str_replace('(**)', '', $asset_detail->asset_dates_edit)));
+					$edit_asset_date_types = explode('|', trim(str_replace('(**)', '', $asset_detail->date_types_edit)));
+
 					$add = ' ADD DATE';
 					?>
 					<td class="record-detail-page">
@@ -141,15 +144,17 @@ echo '-->';
 							if (count($asset_dates) > 0 && isset($asset_dates[0]) && ! empty($asset_dates[0]))
 							{
 								$add = ' ADD ANOTHER DATE';
-								foreach ($asset_dates as $index => $dates)
+//								foreach ($asset_dates as $index => $dates)
+								foreach ($edit_asset_dates as $index => $edit_asset_date)
 								{
+									list($this_asset_date, $this_date_types_id) = explode('^', trim(str_replace('(**)', '', $edit_asset_date)));
 									?>
 									<div id="remove_date_<?php echo $index; ?>" class="remove_date">
 										<div class="edit_form_div">
 											<div>
 												<p>Asset Date:</p>
 												<p>
-													<input type="text" id="asset_date_<?php echo $index; ?>" name="asset_date[]" value="<?php echo trim($dates); ?>" />
+													<input type="text" id="asset_date_<?php echo $index; ?>" name="asset_date[]" value="<?php echo trim($this_asset_date); ?>" />
 												</p>
 											</div>
 											<div>
@@ -162,8 +167,16 @@ echo '-->';
 														foreach ($pbcore_asset_date_types as $row)
 														{
 															$selected = '';
-															if (isset($asset_date_types[$index]) && trim($asset_date_types[$index]) == $row->value)
+															// if (isset($asset_date_types[$index]) && trim($asset_date_types[$index]) == $row->value)
+																// $selected = 'selected="selected"';
+															foreach ($edit_asset_date_types as $dateTypeIndex => $this_date_type_id_value )
+															{
+															if ($selected == '' && trim($this_date_type_id_value) == trim($this_date_types_id) . ' ^ ' . $row->value)
+																{
 																$selected = 'selected="selected"';
+																break 1;
+																}
+															}
 															if ($row->display_value == 1 && ! $commonly)
 															{
 																$commonly = TRUE;

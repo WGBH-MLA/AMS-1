@@ -54,13 +54,11 @@ class Asset extends MY_Controller
 	public function edit()
 	{
 		$asset_id = $this->uri->segment(3);
-
 		if ( ! empty($asset_id))
 		{
 
 			if ($this->input->post())
 			{
-
 				$this->delete_asset_attributes($asset_id);
 				$update_asset_tbl['updated'] = date('Y-m-d H:m:i');
 				if ( ! $this->is_station_user)

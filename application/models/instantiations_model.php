@@ -775,9 +775,9 @@ class Instantiations_Model extends CI_Model
 					else
 					{
 						if ($count == 0)
-							$this->db->like($index, $keyword);
+							$this->db->like($facet_columns[$index], $keyword);
 						else
-							$this->db->or_like($index, $keyword);
+							$this->db->or_like($facet_columns[$index], $keyword);
 					}
 					$count ++;
 				}

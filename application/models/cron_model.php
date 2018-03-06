@@ -310,7 +310,7 @@ class Cron_Model extends CI_Model {
         while (false !== ($file = @readdir($d))) {
             if ($file != '.' && $file != '..') {
 
-                if (is_file($dir . $file) && $file === 'manifest-md5.txt') {
+                if (is_file($dir . $file) && ($file === 'manifest-md5.txt' OR $file === 'manifest-sha256.txt' OR $file === 'manifest-sha512.txt') ) {
                     $my_data_array[] = $dir;
                 } else {
 

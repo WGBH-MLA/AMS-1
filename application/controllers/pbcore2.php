@@ -111,7 +111,8 @@ class Pbcore2 extends CI_Controller
 		ini_set('display_errors', 1);
 
 		$type = 'pbcore2';
-		$file = 'manifest-md5.txt';
+		$filenames = array('manifest-md5.txt','manifest-sha256.txt','manifest-sha512.txt');
+		$file = '';
 		$directory = base64_decode($path);
 		$folder_status = 'complete';
 		if ( ! $data_folder_id = $this->cron_model->get_data_folder_id_by_path($directory))
@@ -120,6 +121,13 @@ class Pbcore2 extends CI_Controller
 		}
 		if (isset($data_folder_id) && $data_folder_id > 0)
 		{
+			foreach ($filenames as $filename ) {
+                		if ( is_file($directory . $filename) ) {
+                        		$file = $filename;
+                       	 		break;
+        	        	}
+	            	}
+		
 			$data_result = file($directory . $file);
 			if (isset($data_result) && ! is_empty($data_result))
 			{

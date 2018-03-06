@@ -110,13 +110,20 @@ class Mediainfo extends CI_Controller {
         @error_reporting(E_ALL);
         @ini_set('display_errors', 1);
         $type = 'mediainfo';
-        $file = 'manifest-md5.txt';
+	$filenames = array('manifest-md5.txt','manifest-sha256.txt','manifest-sha512.txt');
+        $file = '';
         $directory = base64_decode($path);
         $folder_status = 'complete';
         if (!$data_folder_id = $this->cron_model->get_data_folder_id_by_path($directory)) {
             $data_folder_id = $this->cron_model->insert_data_folder(array("folder_path" => $directory, "created_at" => date('Y-m-d H:i:s'), "data_type" => $type));
         }
         if (isset($data_folder_id) && $data_folder_id > 0) {
+	    foreach ($filenames as $filename ) {
+		if ( is_file($directory . $filename) ) {
+			$file = $filename;
+			break;
+		}
+	    }
             $data_result = file($directory . $file);
             if (isset($data_result) && !is_empty($data_result)) {
                 $db_error_counter = 0;

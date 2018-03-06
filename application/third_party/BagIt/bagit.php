@@ -554,7 +554,7 @@ class BagIt
         if (count($files) > 0) {
             $bagdir = $this->bagDirectory;
             $manifestFile = findFirstExisting(
-                array("$bagdir/manifest-sha1.txt", "$bagdir/manifest-md5.txt"),
+                array("$bagdir/manifest-sha1.txt", "$bagdir/manifest-md5.txt","$bagdir/manifest-sha256.txt","$bagdir/manifest-sha512.txt"),
                 "$bagdir/manifest-sha1.txt"
             );
             try {
@@ -573,7 +573,7 @@ class BagIt
             if ($this->isExtended()) {
                 $manifestFile = findFirstExisting(
                     array("$bagdir/tagmanifest-sha1.txt",
-                    "$bagdir/tagmanifest-md5.txt"),
+                    "$bagdir/tagmanifest-md5.txt","$bagdir/manifest-sha256.txt","$bagdir/manifest-sha512.txt"),
                     "$bagdir/tagmanifest-sha1.txt"
                 );
                 $this->tagManifest = new BagItManifest(

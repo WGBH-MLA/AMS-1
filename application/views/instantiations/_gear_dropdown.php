@@ -84,20 +84,23 @@ if ($table_type == 'assets' && $current_tab == 'simple')
 				}
 				?>
 				<?php
-				if ( ! $is_current_user && ! $updating)
+				//if ( ! $is_current_user && ! $updating)
+				if ( false )
 				{
 					?>
 					<li><a id="refine_data" href="#refine_confirm" role="button" data-toggle="modal" data-backdrop="static" onclick="refineConfirm('<?php echo $message; ?>', '<?php echo $type; ?>', '<?php echo $record_type; ?>');">
 							Refine Data</a></li>
 					<?php
 				}
-				else if ( ! $updating)
+				// else if ( ! $updating)
+				else if ( false )
 				{
 					?>
 					<li><a id="cancel_refine_data" href="#refine_cancel" role="button" data-toggle="modal" data-backdrop="static">Cancel Refining</a></li>
 					<?php
 				}
-				else if ($updating)
+				// else if ($updating)
+				else if ( false )
 				{
 					?>
 					<li><a id="cancel_refine_data"   href="javascript://" role="button">Updating Records</a></li>
